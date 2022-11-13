@@ -1,6 +1,6 @@
 module.exports = {
   publicPath: '/hkbj-calculator',
-  outputDir: './dist_hkbj',
+  outputDir: './docs',
   devServer: {
     watchOptions: {
       poll: true,
