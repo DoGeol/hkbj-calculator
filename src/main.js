@@ -4,6 +4,7 @@ import App from './App.vue'
 import './plugins'
 import './styles/reset.scss'
 import './styles/element.scss'
+import './styles/temp.scss'
 import 'pretendard/dist/web/static/pretendard.css'
 
 Vue.config.productionTip = false

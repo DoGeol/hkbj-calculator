@@ -1,4 +1,4 @@
-@import "color";
+@import 'color';
 
 input {
   padding: 8px 16px 8px 8px;
@@ -18,9 +18,20 @@ input {
   }
   input {
     padding: 8px;
-    width: 64px;
+    width: 48px;
     text-align: center;
     border-left: 0;
     border-right: 0;
   }
 }
+
+.accordion-slide-enter-active,
+.accordion-slide-leave-active {
+  height: 50px;
+}
+
+.accordion-slide-enter,
+.accordion-slide-leave-to {
+  height: 0;
+}
+

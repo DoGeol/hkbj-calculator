@@ -1,28 +1,51 @@
 <template>
   <div class="amount">
     <button @click="handleClickDecrease">-</button>
-    <input v-model="amount" readonly />
+    <input ref="input" v-model="native_value" readonly />
     <button @click="handleClickIncrease">+</button>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    value: {
+      type: [Number, String],
+      required: true,
+    },
+    is_func: {
+      type: Boolean,
+      default: false,
+    },
+  },
   name: 'amount',
   data() {
     return {
       amount: 0,
     }
   },
+  computed: {
+    native_value() {
+      return this.value === null || this.value === undefined ? 0 : this.value
+    },
+  },
   methods: {
-    handleClickDecrease() {
-      if (this.amount > 0) {
-        this.amount--
+    handleClickIncrease() {
+      if (this.is_func) {
+        this.$emit('increaseFunction')
+      } else {
+        if (this.native_value >= 0) {
+          this.$emit('input', this.value + 1)
+        }
       }
     },
-    handleClickIncrease() {
-      if (this.amount >= 0) {
-        this.amount++
+    handleClickDecrease() {
+      if (this.is_func) {
+        this.$emit('decreaseFunction')
+      } else {
+        if (this.native_value > 0) {
+          this.$emit('input', this.value - 1)
+        }
       }
     },
   },

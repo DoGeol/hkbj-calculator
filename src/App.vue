@@ -1,35 +1,28 @@
 <template>
   <div class="app">
     <section class="hkbj-calculator__container">
-      <h1 class="hkbj-calculator__title"><strong>홍콩반점</strong> 계산기</h1>
+      <div class="hkbj-calculator__header">
+        <h1 class="hkbj-calculator__header-title" @click="is_config_open = !is_config_open"><strong>홍콩반점</strong> 계산기({{ human_cnt }})</h1>
+        <div class="hkbj-calculator__header-config" :class="{ 'is-open': is_config_open }">
+          인원수
+          <amount v-model="human_cnt" />
+        </div>
+      </div>
       <article class="hkbj-calculator__window">
         <div class="hkbj-calculator__menu">
-          <div class="hkbj-calculator__menu-area">
-            <h3 class="hkbj-calculator__menu-area__title">◆ 면류 / 밥류 ◆</h3>
+          <div class="hkbj-calculator__menu-area" v-for="menu in menu_list" :key="`cagtegory-${menu.id}`">
+            <h3 class="hkbj-calculator__menu-area__title">{{ menu.title }}</h3>
             <div class="hkbj-calculator__menu-list">
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-            </div>
-          </div>
-          <div class="hkbj-calculator__menu-area">
-            <h3 class="hkbj-calculator__menu-area__title">◆ 튀김류 ◆</h3>
-            <div class="hkbj-calculator__menu-list">
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
-              <div class="hkbj-calculator__menu-list-item"><span>짜장면</span><span>5,000</span></div>
+              <div
+                class="hkbj-calculator__menu-list-item"
+                :class="[{ 'is-selected': item.is_selected }, { 'is-limit': checkLimit(item) }]"
+                v-for="item in menu.list"
+                :key="`cagtegory-${menu.id}_${item.id}`"
+                @click="handleClickToggleItem(item)"
+              >
+                <span>{{ item.title }}</span
+                ><span>{{ Number(item.amount).toLocaleString() }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -37,17 +30,17 @@
       <article class="hkbj-calculator__cart" :class="[{ is_open: is_cart_open }]">
         <div class="hkbj-calculator__cart__total-amount" @click="handleClickCart">
           <div class="hkbj-calculator__cart__total-amount-area">
-            <p>총 금액 : {{ Number(total_amount).toLocaleString() }}원</p>
+            <p>가용 금액 : {{ Number(used_amount).toLocaleString() }} 원</p>
           </div>
         </div>
         <div class="hkbj-calculator__cart__menu-list--wrap">
+          <p style="font-size: 3vw; color: rosybrown; margin-bottom: 16px">메뉴를 제거하고 싶으면, 메뉴명을 클릭하거나 메뉴판에서 메뉴를 눌러주세요</p>
           <ul class="hkbj-calculator__cart__menu-list">
-            <li class="hkbj-calculator__cart__menu-list-item">
-              <span>메뉴이름</span>
+            <li class="hkbj-calculator__cart__menu-list-item" v-for="item in cart_list" :key="item.id">
+              <span @click="handleClickDeleteCartItem(item.id)">{{ item.title }}({{ Number(item.amount).toLocaleString() }}원)</span>
               <div class="hkbj-calculator__cart__menu-list-item__right-area">
-                <span>{{ Number(40000).toLocaleString() }}원</span>
-                <amount />
-                <button class="hkbj-calculator__cart__menu-list-item__delete">X</button>
+                <span>{{ Number(item.amount * item.count).toLocaleString() }}원</span>
+                <amount v-model="item.count" is_func @increaseFunction="handleClickCartItemCountUp(item)" @decreaseFunction="handleClickCartItemCountDown(item)" />
               </div>
             </li>
           </ul>
@@ -59,142 +52,77 @@
 
 <script>
 import Amount from '@/components/amount'
+import { hkbj_menus } from './data/menu'
+
 export default {
   name: 'App',
   components: { Amount },
   data() {
     return {
-      total_amount: 70000,
+      human_unit_amount: 10000,
+      human_cnt: 1,
       is_cart_open: false,
+      is_config_open: true,
+      menu_list: [],
+      cart_list: [],
     }
   },
+  computed: {
+    available_amount() {
+      return this.human_cnt * this.human_unit_amount
+    },
+    cart_amount() {
+      return this.cart_list.reduce((result, item) => {
+        return result + item.amount * item.count
+      }, 0)
+    },
+    used_amount() {
+      return this.available_amount - this.cart_amount
+    },
+  },
+  created() {
+    this.menu_list = hkbj_menus
+  },
   methods: {
+    checkLimit(item) {
+      return this.used_amount < item.amount
+    },
     handleClickCart() {
       this.is_cart_open = !this.is_cart_open
+    },
+    handleClickToggleItem(item) {
+      if (!item.is_selected) {
+        this.handleClickAddCardItem(item)
+      } else {
+        this.handleClickDeleteCartItem(item.id)
+      }
+    },
+    handleClickAddCardItem(item) {
+      if (!item.is_selected && item.amount <= this.used_amount && !this.cart_list.some((c_item) => item.id === c_item.id)) {
+        item.is_selected = true
+        item.count = 1
+        this.cart_list.push(item)
+      }
+    },
+    handleClickDeleteCartItem(id) {
+      this.cart_list = this.cart_list.filter((c_item) => {
+        if (id === c_item.id) {
+          c_item.is_selected = false
+          c_item.count = 0
+        }
+        return id !== c_item.id
+      })
+    },
+    handleClickCartItemCountUp(item) {
+      if (item.amount <= this.used_amount) {
+        item.count++
+      }
+    },
+    handleClickCartItemCountDown(item) {
+      if (item.count >= 1) {
+        item.count--
+      }
     },
   },
 }
 </script>
-
-<style lang="scss">
-@import 'styles/color';
-
-.hkbj-calculator {
-  &__container {
-    margin: 0 auto;
-    background-color: $bg-color;
-    height: 100vh;
-    min-width: 280px;
-    max-width: 768px;
-  }
-
-  &__title {
-    font-size: 7.4688vw;
-    text-align: center;
-    background-color: #fd7230;
-    color: white;
-  }
-
-  &__menu {
-    color: white;
-    background-color: #140d0b;
-    height: calc(100vh - 100vh * 0.08);
-
-    &-area {
-      font-size: 0;
-      padding: 4.0833vw 5.2083vw;
-      &__title {
-        font-size: 4.4688vw;
-        text-align: center;
-        margin-bottom: 2.0833vw;
-      }
-    }
-  }
-
-  &__menu-list {
-    font-size: 4.4688vw;
-    &-item {
-      display: inline-flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 50%;
-      padding: 4px 8px;
-      border: 1px solid white;
-
-      &:nth-child(odd) {
-        padding-right: 2.0833vw;
-      }
-
-      &:nth-child(even) {
-        padding-left: 2.0833vw;
-      }
-    }
-  }
-
-  &__cart {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: calc(100vh * 0.08);
-    border: 1px solid $priamry;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    background-color: $bg-color;
-    overflow: hidden;
-
-    transition: all 0.3s ease;
-
-    &.is_open {
-      height: calc(100vh * 0.5);
-    }
-
-    &__total-amount {
-      color: $bg-color;
-      height: calc(100vh * 0.08);
-      border-bottom: 1px solid $priamry;
-      background-color: $priamry-light;
-
-      &-area {
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        font-size: 5.4688vw;
-      }
-    }
-
-    &__menu-list {
-      &--wrap {
-        height: calc(100% - 100vh * 0.08);
-        padding: 16px;
-        overflow: auto;
-      }
-
-      &-item {
-        display: flex;
-        justify-content: space-between;
-        align-content: center;
-        margin-top: 8px;
-
-        &:first-child {
-          margin-top: 0;
-        }
-
-        &__right-area {
-          display: flex;
-          justify-content: center;
-          align-content: center;
-
-          .amount {
-            margin-left: 8px;
-          }
-        }
-
-        &__delete {
-          margin-left: 8px;
-        }
-      }
-    }
-  }
-}
-</style>
