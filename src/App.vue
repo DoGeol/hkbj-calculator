@@ -4,7 +4,9 @@
       <div class="hkbj-calculator__header">
         <div class="hkbj-calculator__header--wrap">
           <font-awesome-icon class="settings left" icon="fa-rotate" @click="handleResetCart" />
-          <h1 class="hkbj-calculator__header-title"><strong>홍콩반점</strong> 계산기({{ human_cnt }}명)</h1>
+          <h1 class="hkbj-calculator__header-title">
+            <strong @click="handleClickDown">홍콩반점 계산기</strong><span @click="handleClickUp">({{ human_cnt }}명)</span>
+          </h1>
           <font-awesome-icon class="settings" icon="fa-gear" @click="is_config_open = !is_config_open" />
         </div>
       </div>
@@ -75,7 +77,7 @@
             </div>
             <div class="item" v-for="m in item.list" :key="'settings_item_' + m.id">
               <span>{{ m.title }}</span>
-              <input style="text-align: right" v-model="m.amount" />
+              <input type="text" style="text-align: right" v-model.number="m.amount" @input="handleInputLimit(m, { min: 0, max: 100000 })" @focus="handleFocus($event)" />
             </div>
           </div>
         </div>
@@ -194,7 +196,16 @@ export default {
       this.human_cnt++
     },
     handleClickDown() {
-      this.human_cnt--
+      if (this.human_cnt > 1) {
+        this.human_cnt--
+      }
+    },
+    handleInputLimit(item, props) {
+      if (props.min > item.amount) {
+        item.amount = props.min
+      } else if (props.max < item.amount) {
+        item.amount = props.max
+      }
     },
   },
 }
