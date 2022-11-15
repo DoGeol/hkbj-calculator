@@ -9,6 +9,10 @@
     "dev": "concurrently \"npm run serve\" \"json-server --watch db/trello.json --port 3002 --no-cors\""
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/vue-fontawesome": "^2.0.9",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "deepmerge": "^4.2.2",

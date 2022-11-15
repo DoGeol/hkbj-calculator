@@ -7,6 +7,15 @@ import './styles/element.scss'
 import './styles/temp.scss'
 import 'pretendard/dist/web/static/pretendard.css'
 
+//fort-awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faGear, faRotate, faWrench } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faGear, faWrench, faRotate)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 Vue.config.productionTip = false
 
 new Vue({

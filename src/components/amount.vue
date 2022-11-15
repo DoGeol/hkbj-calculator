@@ -1,8 +1,8 @@
 <template>
   <div class="amount">
-    <button @click="handleClickDecrease">-</button>
+    <button @click="handleClickDecrease" :disabled="decreaseDisabled">-</button>
     <input ref="input" v-model="native_value" readonly />
-    <button @click="handleClickIncrease">+</button>
+    <button @click="handleClickIncrease" :disabled="increaseDisabled">+</button>
   </div>
 </template>
 
@@ -14,6 +14,14 @@ export default {
       required: true,
     },
     is_func: {
+      type: Boolean,
+      default: false,
+    },
+    increaseDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    decreaseDisabled: {
       type: Boolean,
       default: false,
     },
