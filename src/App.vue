@@ -77,7 +77,7 @@
             </div>
             <div class="item" v-for="m in item.list" :key="'settings_item_' + m.id">
               <span>{{ m.title }}</span>
-              <input type="text" style="text-align: right" v-model.number="m.amount" @input="handleInputLimit(m, { min: 0, max: 100000 })" />
+              <input type="text" style="text-align: right" pattern="\d*" v-model.number="m.amount" @input="handleInputLimit(m, { min: 0, max: 100000 })" />
             </div>
           </div>
         </div>
