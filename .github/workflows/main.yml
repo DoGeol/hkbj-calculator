@@ -1,4 +1,4 @@
-name: 빌드 테스트
+name: 빌드 테스트!!
 
 on:
   workflow_dispatch:
@@ -6,11 +6,17 @@ on:
 jobs:
   build:
     name: Build
+    
     runs-on: ubuntu-latest
+    
     steps:
       - name: test
-        run: echo '::set-output endsWith(github.event.ref, 'message')'
+        run: echo '::set-output {github.event.ref}'
         
-      - name: check tag names
+      - name: check tag names1
         if: "!endsWith(github.event.ref, 'message')"
-        run: echo 'false'
+        run: echo 'test1 !! false'
+
+      - name: check tag names2
+        if: ${{ !endsWith(github.event.ref, 'message') }}
+        run: echo 'test2 !! false'
