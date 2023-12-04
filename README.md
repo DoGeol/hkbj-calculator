@@ -23,4 +23,4 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### TEST qqq 1,2,3,4,5,6,7
+### TEST qqq 1,2,3,4,5,6,7,8
