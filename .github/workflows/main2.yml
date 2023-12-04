@@ -1,4 +1,4 @@
-name: 빌드 테스트!!
+name: 빌드 테스트2
 
 on:
   workflow_dispatch:
