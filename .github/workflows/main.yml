@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: test
-        run: echo '::set-output endsWith(github.ref, 'message')'
+        run: echo '::set-output endsWith(github.event.ref, 'message')'
+        
       - name: check tag names
-        if: ${{ endsWith(github.ref, 'message') != true }}
-        run: echo 'endsWith(github.ref, 'message')'
+        if: "!endsWith(github.event.ref, 'message')"
+        run: echo 'false'
