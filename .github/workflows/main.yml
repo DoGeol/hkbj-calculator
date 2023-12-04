@@ -2,3 +2,20 @@ name: 빌드 테스트
 
 on:
   workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    env:
+      build_secret: ${{ secrets.PROD_BUILD_SECRET }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check secret
+        if: github.event.inputs.password != env.build_secret
+        run: exit 1
+
+      - name: check tag names
+        if: ${{ endsWith(github.ref, 'message') != true }}
+        run: exit 2
