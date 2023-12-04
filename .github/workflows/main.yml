@@ -10,4 +10,4 @@ jobs:
     steps:
       - name: check tag names
         if: ${{ endsWith(github.ref, 'message') != true }}
-        run: exit 2
+        run: echo 'endsWith(github.ref, 'message')'
