@@ -2,7 +2,14 @@ name: 빌드 테스트4
 
 on:
   workflow_dispatch:
-
+    inputs:
+      name:
+        type: multi-choice
+        description: select packages
+        options: 
+        - go-service1
+        - go-service2
+        - py-service1
 jobs:
   echo:
     runs-on: ubuntu-latest
